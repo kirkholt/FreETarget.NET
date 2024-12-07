@@ -47,7 +47,10 @@ namespace FreETarget.NET.Data.Entities
         /// </summary>
         public decimal A { get; set; }
 
-        public  ShotResult? ShotResult   { get; set; }
+        /// <summary>
+        /// The result of the shot
+        /// </summary>
+        public ShotResult? ShotResult   { get; set; }
 
         // Foreign keys
 
