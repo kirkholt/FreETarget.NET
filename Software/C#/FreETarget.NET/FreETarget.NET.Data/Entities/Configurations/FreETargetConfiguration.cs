@@ -15,7 +15,7 @@ namespace FreETarget.NET.Data.Entities.Configurations
         public void Configure(EntityTypeBuilder<FreETarget> builder)
         {
 
-            builder.ToTable("FreETarget");
+            builder.ToTable(typeof(FreETarget).Name);
             //builder.Property(b => b.Name).IsRequired().HasMaxLength(100);
 
         }

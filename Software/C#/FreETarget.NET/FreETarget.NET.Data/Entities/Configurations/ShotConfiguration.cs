@@ -15,7 +15,7 @@ namespace FreETarget.NET.Data.Entities.Configurations
         public void Configure(EntityTypeBuilder<Shot> builder)
         {
 
-            builder.ToTable("Shot");
+            builder.ToTable(typeof(Shot).Name);
             builder.HasKey(b => b.Id).HasName("PK_Shot");
             //builder.Property(b => b.Name).IsRequired().HasMaxLength(100);
 

@@ -5,6 +5,8 @@ VisualStudioVersion = 17.11.35303.130
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FreETarget.NET.Data", "FreETarget.NET.Data\FreETarget.NET.Data.csproj", "{CA46AED5-944E-4C77-8B07-752F95D7ED4C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FreETarget.NET.Web", "FreETarget.NET.Web\FreETarget.NET.Web.csproj", "{570A2161-CA5C-43BA-80A5-0383CF02808A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{CA46AED5-944E-4C77-8B07-752F95D7ED4C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CA46AED5-944E-4C77-8B07-752F95D7ED4C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CA46AED5-944E-4C77-8B07-752F95D7ED4C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{570A2161-CA5C-43BA-80A5-0383CF02808A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{570A2161-CA5C-43BA-80A5-0383CF02808A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{570A2161-CA5C-43BA-80A5-0383CF02808A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{570A2161-CA5C-43BA-80A5-0383CF02808A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

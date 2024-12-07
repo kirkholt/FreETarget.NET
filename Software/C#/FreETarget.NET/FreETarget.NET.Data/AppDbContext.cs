@@ -3,13 +3,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FreETarget.NET.Data
 {
-    internal class AppDbContext: DbContext
+    public class AppDbContext: DbContext
     {
-        DbSet<Entities.FreETarget> FreETargetDbSet { get; set; }
-        DbSet<Entities.Range> RangeDbSet { get; set; }
-        DbSet<Entities.Session> SessiondDbSet  { get; set; }
-        DbSet<Entities.Shot> ShotDbSet { get; set; }
-        DbSet<Entities.Track> TrackDbSet { get; set; }
+        public DbSet<Entities.FreETarget> FreETargetDbSet { get; set; }
+        public DbSet<Entities.Range> RangeDbSet { get; set; }
+        public DbSet<Entities.Session> SessiondDbSet  { get; set; }
+        public DbSet<Entities.Shot> ShotDbSet { get; set; }
+        public DbSet<Entities.Track> TrackDbSet { get; set; }
 
         public AppDbContext()
         {

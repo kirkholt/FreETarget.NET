@@ -15,7 +15,7 @@ namespace FreETarget.NET.Data.Entities.Configurations
         public void Configure(EntityTypeBuilder<Session> builder)
         {
 
-            builder.ToTable("Session");
+            builder.ToTable(typeof(Session).Name);
             //builder.Property(b => b.Name).IsRequired().HasMaxLength(100);
 
         }

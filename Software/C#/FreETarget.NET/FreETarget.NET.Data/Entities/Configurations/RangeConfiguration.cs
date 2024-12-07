@@ -15,9 +15,40 @@ namespace FreETarget.NET.Data.Entities.Configurations
         public void Configure(EntityTypeBuilder<Range> builder)
         {
 
-            builder.ToTable("Range");
+            builder.ToTable(typeof(Range).Name);
             builder.Property(b => b.Name).IsRequired().HasMaxLength(100);
-
+            builder.HasData(
+                new Range
+                {
+                    Id = Guid.CreateVersion7(),
+                    Name = "Range 1"
+                },
+                new Range
+                {
+                    Id = Guid.CreateVersion7(),
+                    Name = "Range 2"
+                },
+                new Range
+                {
+                    Id = Guid.CreateVersion7(),
+                    Name = "Range 3"
+                },
+               new Range
+               {
+                   Id = Guid.CreateVersion7(),
+                   Name = "Range 4"
+               },
+                new Range
+                {
+                    Id = Guid.CreateVersion7(),
+                    Name = "Range 5"
+                },
+                new Range
+                {
+                    Id = Guid.CreateVersion7(),
+                    Name = "Range 6"
+                }
+            );
         }
     }
 }

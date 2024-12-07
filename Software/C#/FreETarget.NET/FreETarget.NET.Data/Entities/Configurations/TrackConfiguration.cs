@@ -15,9 +15,8 @@ namespace FreETarget.NET.Data.Entities.Configurations
         public void Configure(EntityTypeBuilder<Track> builder)
         {
 
-            builder.ToTable("Track");
+            builder.ToTable(typeof(Track).Name);
             //builder.Property(b => b.Name).IsRequired().HasMaxLength(100);
-
         }
     }
 }
