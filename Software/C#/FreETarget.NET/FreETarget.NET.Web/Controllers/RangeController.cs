@@ -1,74 +1,58 @@
 ﻿using FreETarget.NET.Data;
+using FreETarget.NET.Data.Enums;
 using FreETarget.NET.Data.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Range = FreETarget.NET.Data.Entities.Range;
 
 namespace FreETarget.NET.Web.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class RangeController : ControllerBase
+    public class RangeController : FreETargetControllerBase
     {
-        private readonly AppDbContext _context;
-        private readonly DataService _dataService;  
+        private readonly DataService _dataService;
 
         public RangeController(AppDbContext context)
         {
-            _context = context;
             _dataService = new DataService(context);
         }
 
         // GET: api/Range
         [HttpGet]
-        public async Task<IEnumerable<Range>> GetRangeDbSet()
+        public async Task<List<Range>> GetRangeDbSet(CancellationToken cancellationToken)
         {
-            return await _dataService.RangeGet();
+            return await _dataService.RangeGet(cancellationToken);
         }
 
         // GET: api/Range/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Range>> GetRange(Guid id)
+        public async Task<ActionResult<Range>> GetRange(Guid id, CancellationToken cancellationToken)
         {
-            var range = await _context.RangeDbSet.FindAsync(id);
+
+            Range? range = await _dataService.RangeGet(id, cancellationToken);
 
             if (range == null)
             {
                 return NotFound();
             }
-
-            return range;
+            return Ok(range);
         }
 
         // PUT: api/Range/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutRange(Guid id, Range range)
+        public async Task<IActionResult> PutRange(Guid id, Range range, CancellationToken cancellationToken)
         {
+            SaveResult saveResult;
             if (id != range.Id)
             {
-                return BadRequest();
+                saveResult = SaveResult.BadRequest;
             }
-
-            _context.Entry(range).State = EntityState.Modified;
-
-            try
+            else
             {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!RangeExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
+                saveResult = await _dataService.RangePut(range, cancellationToken);
+            }   
+            return base.SaveResultActionResult(saveResult);
         }
 
         // POST: api/Range
@@ -76,31 +60,16 @@ namespace FreETarget.NET.Web.Controllers
         [HttpPost]
         public async Task<ActionResult<Range>> PostRange(Range range)
         {
-            _context.RangeDbSet.Add(range);
-            await _context.SaveChangesAsync();
-
+            await _dataService.RangePost(range);
             return CreatedAtAction("GetRange", new { id = range.Id }, range);
         }
 
         // DELETE: api/Range/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteRange(Guid id)
+        public async Task<IActionResult> DeleteRange(Guid id, CancellationToken cancellationToken)
         {
-            var range = await _context.RangeDbSet.FindAsync(id);
-            if (range == null)
-            {
-                return NotFound();
-            }
-
-            _context.RangeDbSet.Remove(range);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
-
-        private bool RangeExists(Guid id)
-        {
-            return _context.RangeDbSet.Any(e => e.Id == id);
+            SaveResult saveResult = await _dataService.RangeDelete(id, cancellationToken);
+            return base.SaveResultActionResult(saveResult);
         }
     }
 }
