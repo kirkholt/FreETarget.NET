@@ -1,6 +1,4 @@
-﻿using FreETarget.NET.Data.Models.ShotResult;
-
-namespace FreETarget.NET.Data.Entities
+﻿namespace FreETarget.NET.Data.Entities
 {
     /// <summary>
     /// A shot is a single bullet fired at a target
@@ -47,10 +45,9 @@ namespace FreETarget.NET.Data.Entities
         /// </summary>
         public decimal A { get; set; }
 
-        /// <summary>
-        /// The result of the shot
-        /// </summary>
-        public ShotResult? ShotResult   { get; set; }
+        public int? ResultInteger { get; set; }
+        public  bool? ResultIntegerX10 { get; set; }
+        public decimal? ResultDecimal { get; set; }
 
         // Foreign keys
 
