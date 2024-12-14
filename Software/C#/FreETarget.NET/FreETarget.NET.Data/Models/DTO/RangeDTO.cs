@@ -1,38 +1,38 @@
-﻿using FreETarget.NET.Data.Models.DTO;
+﻿using Range = FreETarget.NET.Data.Entities.Range;
 
-namespace FreETarget.NET.Data.Entities
+namespace FreETarget.NET.Data.Models.DTO
 {
     /// <summary>
     /// A shooting range is a place (ie. club, facility) where shooting sports are practiced.
     /// A club can have multiple ranges (ie. indoor, outdoor, 25m, 50m, 100m, etc.)
     /// It has multiple tracks
     /// </summary>
-    public class Range
+    public class RangeDTO
     {
         /// <summary>
         /// Unique identifier of the range
         /// </summary>
         public Guid Id { get; set; } = Guid.CreateVersion7();
-        
+
         /// <summary>
         /// The name of the range
         /// </summary>
         public string Name { get; set; } = string.Empty;
 
-        // Navigation properties
+        /// <summary>
+        /// Default constructor
+        /// </summary>
+        public RangeDTO() { }
 
         /// <summary>
-        /// The list of tracks in the range
+        /// constructor for a range
         /// </summary>
-        public ICollection<Track> TrackList { get; internal set; } = new List<Track>();
-
-        public Range() { }
-
-        public Range(RangeDTO rangeDTO)
+        /// <param name="range"></param>
+        public RangeDTO(Range range)
         {
-            this.Id = rangeDTO.Id;
-            this.Name = rangeDTO.Name;  
-        }   
+            this.Id = range.Id;
+            this.Name = range.Name;
+        }
 
     }
 }

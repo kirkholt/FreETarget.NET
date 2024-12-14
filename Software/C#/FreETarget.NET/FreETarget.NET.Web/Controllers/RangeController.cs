@@ -1,5 +1,6 @@
 ﻿using FreETarget.NET.Data;
 using FreETarget.NET.Data.Enums;
+using FreETarget.NET.Data.Models.DTO;
 using FreETarget.NET.Data.Services;
 using Microsoft.AspNetCore.Mvc;
 using Range = FreETarget.NET.Data.Entities.Range;
@@ -39,28 +40,26 @@ namespace FreETarget.NET.Web.Controllers
         }
 
         // PUT: api/Range/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutRange(Guid id, Range range, CancellationToken cancellationToken)
+        public async Task<IActionResult> PutRange(Guid id, RangeDTO rangeDTO, CancellationToken cancellationToken)
         {
             SaveResult saveResult;
-            if (id != range.Id)
+            if (id != rangeDTO.Id)
             {
                 saveResult = SaveResult.BadRequest;
             }
             else
             {
-                saveResult = await _dataService.RangePut(range, cancellationToken);
+                saveResult = await _dataService.RangePut(rangeDTO, cancellationToken);
             }   
             return base.SaveResultActionResult(saveResult);
         }
 
         // POST: api/Range
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Range>> PostRange(Range range)
+        public async Task<ActionResult<Range>> PostRange(RangeDTO rangeDTO)
         {
-            await _dataService.RangePost(range);
+            Range range = await _dataService.RangePost(rangeDTO);
             return CreatedAtAction("GetRange", new { id = range.Id }, range);
         }
 

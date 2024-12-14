@@ -1,4 +1,6 @@
-﻿namespace FreETarget.NET.Data.Entities
+﻿using FreETarget.NET.Data.Models.DTO;
+
+namespace FreETarget.NET.Data.Entities
 {
     /// <summary>
     /// A track is a place where a single shooter can shoot at a time
@@ -14,7 +16,7 @@
         /// <summary>
         /// The range where the track is located
         /// </summary>
-        public required Range Range { get; set; }
+        public Range Range { get; set; }
 
         /// <summary>
         /// The number of the track
@@ -44,5 +46,35 @@
         /// The identifier of the target used on the track
         /// </summary>
         public Guid? FreETargetId { get; set; }
+
+        /// <summary>
+        /// Default constructor
+        /// </summary>
+        public Track() { }
+
+        /// <summary>
+        /// Constructor for a track 
+        /// </summary>
+        /// <param name="trackDto"></param>
+        public Track(TrackDTO trackDTO)
+        {
+            this.Id = trackDTO.Id;
+            this.No = trackDTO.No;
+            this.RangeId = trackDTO.RangeId;
+            this.FreETargetId = trackDTO.FreETargetId;
+
+            //this.Range = new Range()
+            //{
+            //    Id = trackDTO.RangeId
+            //};
+
+            if (trackDTO.FreETargetId != null)
+            {
+                this.FreETarget = new FreETarget()
+                {
+                    Id = trackDTO.FreETargetId.Value
+                };
+            }
+        }
     }
 }

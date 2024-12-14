@@ -1,13 +1,14 @@
 ﻿using FreETarget.NET.Data.Entities.Configurations;
 using Microsoft.EntityFrameworkCore;
+using System.Diagnostics;
 
 namespace FreETarget.NET.Data
 {
-    public class AppDbContext: DbContext
+    public class AppDbContext : DbContext
     {
         public DbSet<Entities.FreETarget> FreETargetDbSet { get; set; }
         public DbSet<Entities.Range> RangeDbSet { get; set; }
-        public DbSet<Entities.Session> SessiondDbSet  { get; set; }
+        public DbSet<Entities.Session> SessiondDbSet { get; set; }
         public DbSet<Entities.Shot> ShotDbSet { get; set; }
         public DbSet<Entities.Track> TrackDbSet { get; set; }
 
@@ -17,6 +18,11 @@ namespace FreETarget.NET.Data
         public AppDbContext(DbContextOptions options) : base(options)
         {
         }
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+            => optionsBuilder
+                .LogTo(message => Debug.WriteLine(message))
+                .EnableSensitiveDataLogging()
+                .EnableDetailedErrors();
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
