@@ -221,5 +221,111 @@ namespace FreETarget.NET.Data.Services
         }
 
         #endregion
+
+        #region Session
+        public async Task<SaveResult> SessionDelete(Guid id, CancellationToken cancellationToken = default)
+        {
+            Session? session = await SessionGet(id, cancellationToken);
+            if (session == null)
+            {
+                return SaveResult.NotFound;
+            }
+
+            _context.SessionDbSet.Remove(session);
+            await _context.SaveChangesAsync();
+            return SaveResult.Ok;
+        }
+
+        private async Task<bool> SessionExists(Guid id, CancellationToken cancellationToken = default)
+        {
+            return await SessionGet(id, cancellationToken) != null;
+        }
+
+        public async Task<List<Session>> SessionGet(CancellationToken cancellationToken = default)
+        {
+            return await _context
+                .SessionDbSet
+                .OrderBy(o => o.CreatedAt)  
+                .ToListAsync(cancellationToken);
+
+        }
+
+        public async Task<Session?> SessionGet(Guid id, CancellationToken cancellationToken = default)
+        {
+            return await _context
+                .SessionDbSet
+                .Include(i => i.Track)
+                .ThenInclude(i => i.Range)  
+                .Include(i => i.ShotList)
+                .AsNoTracking()
+                .Where(w => w.Id == id)
+                .SingleOrDefaultAsync(cancellationToken);
+        }
+
+        public async Task<List<Session>> SessionGetByTrackId(Guid trackId, CancellationToken cancellationToken = default)
+        {
+            return await _context
+                .SessionDbSet
+                .Include(i => i.Track)
+                .ThenInclude(i => i.Range)
+                .Include(i => i.ShotList)
+                .AsNoTracking()
+                .Where(w => w.TrackId == trackId)
+                .OrderBy(o => o.CreatedAt)
+                .ToListAsync(cancellationToken);
+        }
+
+        public async Task<Session> SessionPost(Session session, CancellationToken cancellationToken = default)
+        {
+            _context.SessionDbSet.Add(session);
+            await _context.SaveChangesAsync(cancellationToken);
+            _context.ChangeTracker.Clear();
+
+            // If the session is active, deactivate all other sessions on the same track
+            if (session.Active)
+            {
+               await  _context
+                    .SessionDbSet
+                    .Where(w => w.TrackId == session.TrackId && w.Id != session.Id)
+                    .ExecuteUpdateAsync(e => e.SetProperty(x => x.Active, false));
+            }
+            return await SessionGet(session.Id, cancellationToken);
+        }
+
+        public async Task<SaveResult> SessionPut(Session session, CancellationToken cancellationToken = default)
+        {
+            SaveResult saveResult;
+            _context.Entry(session).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+
+                // If the session is active, deactivate all other sessions on the same track
+                if (session.Active)
+                {
+                    await _context
+                         .SessionDbSet
+                         .Where(w => w.TrackId == session.TrackId && w.Id != session.Id)
+                         .ExecuteUpdateAsync(e => e.SetProperty(x => x.Active, false));
+                }
+                saveResult = SaveResult.Ok;
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!await SessionExists(session.Id, cancellationToken))
+                {
+                    saveResult = SaveResult.NotFound;
+                }
+                else
+                {
+                    throw;
+                }
+            }
+            _context.ChangeTracker.Clear();
+            return saveResult;
+        }
+
+        #endregion
     }
 }

@@ -8,7 +8,7 @@ namespace FreETarget.NET.Data
     {
         public DbSet<Entities.Target> TargetDbSet { get; set; }
         public DbSet<Entities.Range> RangeDbSet { get; set; }
-        public DbSet<Entities.Session> SessiondDbSet { get; set; }
+        public DbSet<Entities.Session> SessionDbSet { get; set; }
         public DbSet<Entities.Shot> ShotDbSet { get; set; }
         public DbSet<Entities.Track> TrackDbSet { get; set; }
 

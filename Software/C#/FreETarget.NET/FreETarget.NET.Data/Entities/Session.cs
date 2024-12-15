@@ -4,7 +4,7 @@ namespace FreETarget.NET.Data.Entities
 {
 
     /// <summary>
-    /// A session is a collection of shots on at track
+    /// A session is a collection of shots on a track
     /// </summary>
     public class Session
     {
@@ -16,12 +16,12 @@ namespace FreETarget.NET.Data.Entities
         /// <summary>
         /// The Date and time when the session was created
         /// </summary>
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public DateTime CreatedAt { get; private set; } = DateTime.Now;
 
         /// <summary>
         /// The track where the session was shot
         /// </summary>
-        public required Track Track { get; set; }
+        public Track Track { get; set; }
         
         /// <summary>
         /// Is the session active
@@ -30,7 +30,7 @@ namespace FreETarget.NET.Data.Entities
         /// There can be only one active session per track
         /// When a session is active, it is possible to add shots to it
         /// </remarks>
-        public bool Active { get; set; }
+        public bool Active { get; set; } = true;
 
 
         /// <summary>
@@ -46,7 +46,7 @@ namespace FreETarget.NET.Data.Entities
         /// <summary>
         /// The type of result for the session
         /// </summary>
-        public ResultType ResultType { get; set; }
+        public ResultType ResultType { get; set; } = ResultType.Integer;
 
         // Navigation properties
 

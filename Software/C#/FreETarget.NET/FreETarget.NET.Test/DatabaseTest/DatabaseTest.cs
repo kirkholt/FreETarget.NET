@@ -162,5 +162,46 @@ namespace FreETarget.NET.Test.DatabaseTest
             trackList = await DataService.TrackGet();
             Assert.Empty(trackList);
         }
+
+        [Fact]
+        public async Task TestSession()
+        {
+            Init();
+
+            Guid rangeId = Guid.CreateVersion7();
+            string rangeName = "Test Range";
+
+
+            RangeDTO rangeDTO = new()
+            {
+                Id = rangeId,
+                Name = rangeName
+            };
+
+            Data.Entities.Range range = await DataService.RangePost(rangeDTO);
+
+            int trackNo = 1;
+            TrackDTO trackDTO = new()
+            {
+                RangeId = rangeId,
+                No = trackNo
+            };
+            Track track = await DataService.TrackPost(trackDTO);
+
+            Session session = new();
+            session.TrackId = track.Id;
+            session.TargetType = TargetType.Dgi15Riffel;
+            session.SessionType = SessionType.Trial;
+            session.ResultType = ResultType.Integer;
+            
+            session = await DataService.SessionPost(session);
+            Assert.NotNull(session);
+            Assert.Equal(track.Id, session.TrackId);
+
+            List<Session> sessionList = await DataService.SessionGet();
+            Assert.Single(sessionList);
+
+            Session session1 = session;
+        }
     }
 }
