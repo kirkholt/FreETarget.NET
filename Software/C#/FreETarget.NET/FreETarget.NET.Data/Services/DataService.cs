@@ -104,6 +104,7 @@ namespace FreETarget.NET.Data.Services
         {
             return await _context.TrackDbSet
                 .Include(i => i.Range)
+                .Include(i => i.Target)
                 .ToListAsync(cancellationToken);
         }
 
@@ -111,6 +112,7 @@ namespace FreETarget.NET.Data.Services
         {
             return await _context.TrackDbSet
                 .Include( i => i.Range)
+                .Include(i => i.Target)
                 .AsNoTracking().Where(w => w.Id == id).SingleOrDefaultAsync(cancellationToken);
         }
 

@@ -93,6 +93,8 @@ namespace FreETarget.NET.Test.DatabaseTest
             Assert.NotNull(t2);
             Assert.Equal(newName, t2.Name);
 
+
+
             SaveResult saveResult = await DataService.TargetDelete(targetId);
             Assert.Equal(SaveResult.Ok, saveResult);
             list = await DataService.TargetGet();
@@ -139,6 +141,21 @@ namespace FreETarget.NET.Test.DatabaseTest
             Track? track1 = await DataService.TrackGet(trackGuid);
             Assert.NotNull(track1);
             Assert.Equal(newTrackNo, track1.No);
+
+            string targetName = "Test Target";
+            Target target = new()
+            {
+                Id = Guid.CreateVersion7(),
+                Name = targetName
+            };
+            target = await DataService.TargetPost(target);
+
+            track1.TargetId = target.Id;
+            await DataService.TrackPut(new TrackDTO(track1));   
+
+            Track? track2 = await DataService.TrackGet(trackGuid);
+            Assert.NotNull(track2);
+            Assert.Equal(target.Id, track2.TargetId);
 
             SaveResult saveResult= await DataService.TrackDelete(trackGuid);
             Assert.Equal(SaveResult.Ok, saveResult);

@@ -17,7 +17,7 @@ namespace FreETarget.NET.Data.Entities
         /// <summary>
         /// The target used on the track
         /// </summary>
-        public Target? FreETarget { get; set; }
+        public Target? Target { get; set; }
 
         // Navigation properties
 
@@ -45,7 +45,7 @@ namespace FreETarget.NET.Data.Entities
 
             if (trackDTO.TargetId != null)
             {
-                this.FreETarget = new Target()
+                this.Target = new Target()
                 {
                     Id = trackDTO.TargetId.Value
                 };
