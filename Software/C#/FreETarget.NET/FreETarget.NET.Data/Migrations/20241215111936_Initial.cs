@@ -6,22 +6,11 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace FreETarget.NET.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class initial : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.CreateTable(
-                name: "FreETarget",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "TEXT", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_FreETarget", x => x.Id);
-                });
-
             migrationBuilder.CreateTable(
                 name: "Range",
                 columns: table => new
@@ -35,28 +24,42 @@ namespace FreETarget.NET.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Target",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "TEXT", nullable: false),
+                    Name = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
+                    Description = table.Column<string>(type: "TEXT", maxLength: 500, nullable: true),
+                    IpAddress = table.Column<string>(type: "TEXT", maxLength: 50, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Target", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Track",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "TEXT", nullable: false),
                     No = table.Column<int>(type: "INTEGER", nullable: false),
                     RangeId = table.Column<Guid>(type: "TEXT", nullable: false),
-                    FreETargetId = table.Column<Guid>(type: "TEXT", nullable: true)
+                    TargetId = table.Column<Guid>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Track", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Track_FreETarget_FreETargetId",
-                        column: x => x.FreETargetId,
-                        principalTable: "FreETarget",
-                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Track_Range_RangeId",
                         column: x => x.RangeId,
                         principalTable: "Range",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Track_Target_TargetId",
+                        column: x => x.TargetId,
+                        principalTable: "Target",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -119,15 +122,15 @@ namespace FreETarget.NET.Data.Migrations
                 column: "SessionId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Track_FreETargetId",
-                table: "Track",
-                column: "FreETargetId",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Track_RangeId",
                 table: "Track",
                 column: "RangeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Track_TargetId",
+                table: "Track",
+                column: "TargetId",
+                unique: true);
         }
 
         /// <inheritdoc />
@@ -143,10 +146,10 @@ namespace FreETarget.NET.Data.Migrations
                 name: "Track");
 
             migrationBuilder.DropTable(
-                name: "FreETarget");
+                name: "Range");
 
             migrationBuilder.DropTable(
-                name: "Range");
+                name: "Target");
         }
     }
 }

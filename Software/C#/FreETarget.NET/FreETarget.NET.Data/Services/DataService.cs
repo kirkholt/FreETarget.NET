@@ -1,8 +1,8 @@
 ﻿using FreETarget.NET.Data.Enums;
 using FreETarget.NET.Data.Models.DTO;
 using Microsoft.EntityFrameworkCore;
-using Track = FreETarget.NET.Data.Entities.Track;
 using Range = FreETarget.NET.Data.Entities.Range;
+using FreETarget.NET.Data.Entities;
 
 namespace FreETarget.NET.Data.Services
 {
@@ -51,7 +51,7 @@ namespace FreETarget.NET.Data.Services
             _context.RangeDbSet.Add(range);
             await _context.SaveChangesAsync(cancellationToken);
             _context.ChangeTracker.Clear();
-            return range;
+            return await RangeGet(rangeDTO.Id, cancellationToken);
         }
 
         public async Task<SaveResult> RangePut(RangeDTO rangeDTO, CancellationToken cancellationToken = default)
@@ -151,5 +151,73 @@ namespace FreETarget.NET.Data.Services
         }
         #endregion
 
+        #region Target
+        public async Task<SaveResult> TargetDelete(Guid id, CancellationToken cancellationToken = default)
+        {
+            Target? target = await TargetGet(id, cancellationToken);
+            if (target == null)
+            {
+                return SaveResult.NotFound;
+            }
+
+            _context.TargetDbSet.Remove(target);
+            await _context.SaveChangesAsync();
+            return SaveResult.Ok;
+        }
+
+        private async Task<bool> TargetExists(Guid id, CancellationToken cancellationToken = default)
+        {
+            return await TargetGet(id, cancellationToken) != null;
+        }
+
+        public async Task<List<Target>> TargetGet(CancellationToken cancellationToken = default)
+        {
+            return await _context.TargetDbSet.ToListAsync(cancellationToken);
+
+        }
+
+        public async Task<Target?> TargetGet(Guid id, CancellationToken cancellationToken = default)
+        {
+            return await _context.
+                TargetDbSet
+                .AsNoTracking()
+                .Where(w => w.Id == id)
+                .SingleOrDefaultAsync(cancellationToken);
+        }
+
+        public async Task<Target> TargetPost(Target target, CancellationToken cancellationToken = default)
+        {
+            _context.TargetDbSet.Add(target);
+            await _context.SaveChangesAsync(cancellationToken);
+            _context.ChangeTracker.Clear();
+            return await TargetGet(target.Id, cancellationToken);
+        }
+
+        public async Task<SaveResult> TargetPut(Target target, CancellationToken cancellationToken = default)
+        {
+            SaveResult saveResult;
+            _context.Entry(target).State = EntityState.Modified;
+
+            try
+            {
+                var x = await _context.SaveChangesAsync();
+                saveResult = SaveResult.Ok;
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!await TargetExists(target.Id, cancellationToken))
+                {
+                    saveResult = SaveResult.NotFound;
+                }
+                else
+                {
+                    throw;
+                }
+            }
+            _context.ChangeTracker.Clear();
+            return saveResult;
+        }
+
+        #endregion
     }
 }

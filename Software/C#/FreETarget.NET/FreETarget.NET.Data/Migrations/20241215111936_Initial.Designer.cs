@@ -11,25 +11,14 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FreETarget.NET.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241207134617_initial")]
-    partial class initial
+    [Migration("20241215111936_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.0");
-
-            modelBuilder.Entity("FreETarget.NET.Data.Entities.FreETarget", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("FreETarget", (string)null);
-                });
 
             modelBuilder.Entity("FreETarget.NET.Data.Entities.Range", b =>
                 {
@@ -119,13 +108,34 @@ namespace FreETarget.NET.Data.Migrations
                     b.ToTable("Shot", (string)null);
                 });
 
-            modelBuilder.Entity("FreETarget.NET.Data.Entities.Track", b =>
+            modelBuilder.Entity("FreETarget.NET.Data.Entities.Target", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
-                    b.Property<Guid?>("FreETargetId")
+                    b.Property<string>("Description")
+                        .HasMaxLength(500)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("IpAddress")
+                        .HasMaxLength(50)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Target", (string)null);
+                });
+
+            modelBuilder.Entity("FreETarget.NET.Data.Entities.Track", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
                     b.Property<int>("No")
@@ -134,12 +144,15 @@ namespace FreETarget.NET.Data.Migrations
                     b.Property<Guid>("RangeId")
                         .HasColumnType("TEXT");
 
+                    b.Property<Guid?>("TargetId")
+                        .HasColumnType("TEXT");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("FreETargetId")
-                        .IsUnique();
-
                     b.HasIndex("RangeId");
+
+                    b.HasIndex("TargetId")
+                        .IsUnique();
 
                     b.ToTable("Track", (string)null);
                 });
@@ -168,24 +181,19 @@ namespace FreETarget.NET.Data.Migrations
 
             modelBuilder.Entity("FreETarget.NET.Data.Entities.Track", b =>
                 {
-                    b.HasOne("FreETarget.NET.Data.Entities.FreETarget", "FreETarget")
-                        .WithOne("Track")
-                        .HasForeignKey("FreETarget.NET.Data.Entities.Track", "FreETargetId");
-
                     b.HasOne("FreETarget.NET.Data.Entities.Range", "Range")
                         .WithMany("TrackList")
                         .HasForeignKey("RangeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("FreETarget.NET.Data.Entities.Target", "FreETarget")
+                        .WithOne("Track")
+                        .HasForeignKey("FreETarget.NET.Data.Entities.Track", "TargetId");
+
                     b.Navigation("FreETarget");
 
                     b.Navigation("Range");
-                });
-
-            modelBuilder.Entity("FreETarget.NET.Data.Entities.FreETarget", b =>
-                {
-                    b.Navigation("Track");
                 });
 
             modelBuilder.Entity("FreETarget.NET.Data.Entities.Range", b =>
@@ -196,6 +204,11 @@ namespace FreETarget.NET.Data.Migrations
             modelBuilder.Entity("FreETarget.NET.Data.Entities.Session", b =>
                 {
                     b.Navigation("ShotList");
+                });
+
+            modelBuilder.Entity("FreETarget.NET.Data.Entities.Target", b =>
+                {
+                    b.Navigation("Track");
                 });
 
             modelBuilder.Entity("FreETarget.NET.Data.Entities.Track", b =>

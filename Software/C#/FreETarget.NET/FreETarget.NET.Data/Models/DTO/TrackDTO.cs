@@ -22,7 +22,7 @@ namespace FreETarget.NET.Data.Models.DTO
         /// <summary>
         /// The identifier of the target used on the track
         /// </summary>
-        public Guid? FreETargetId { get; set; }
+        public Guid? TargetId { get; set; }
 
         public TrackDTO() { }
 
@@ -31,7 +31,7 @@ namespace FreETarget.NET.Data.Models.DTO
             this.Id = track.Id;
             this.No = track.No;
             this.RangeId = track.RangeId;
-            this.FreETargetId = track.FreETargetId;
+            this.TargetId = track.TargetId;
         }
     }
 }

@@ -1,15 +1,21 @@
-﻿namespace FreETarget.NET.Data.Entities
+﻿using FreETarget.NET.Data.Models.DTO;
+
+namespace FreETarget.NET.Data.Entities
 {
     /// <summary>
     /// A target is a piece of paper or a electronic device that is used for shooting practice
     /// </summary>
-    public class FreETarget
+    public class Target : TargetIpDTO
     {
         /// <summary>
-        /// Unique identifier of the target
-        /// Set in the target hardware
+        /// The name of the target
         /// </summary>
-        public Guid Id { get; set; }
+        public string Name { get; set; }
+
+        /// <summary>
+        /// The description of the target
+        /// </summary>
+        public string Description { get; set; }
 
         /// <summary>
         /// The track where the target is located

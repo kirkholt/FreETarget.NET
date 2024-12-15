@@ -6,7 +6,7 @@ namespace FreETarget.NET.Data
 {
     public class AppDbContext : DbContext
     {
-        public DbSet<Entities.FreETarget> FreETargetDbSet { get; set; }
+        public DbSet<Entities.Target> TargetDbSet { get; set; }
         public DbSet<Entities.Range> RangeDbSet { get; set; }
         public DbSet<Entities.Session> SessiondDbSet { get; set; }
         public DbSet<Entities.Shot> ShotDbSet { get; set; }
@@ -29,7 +29,7 @@ namespace FreETarget.NET.Data
 
             // Vi kan ikke bruge denne metode, da vi ikke kan injecte DatabaseFacade
             //modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
-            modelBuilder.ApplyConfiguration(new FreETargetConfiguration(this.Database));
+            modelBuilder.ApplyConfiguration(new TargetConfiguration(this.Database));
             modelBuilder.ApplyConfiguration(new RangeConfiguration(this.Database));
             modelBuilder.ApplyConfiguration(new SessionConfiguration(this.Database));
             modelBuilder.ApplyConfiguration(new ShotConfiguration(this.Database));

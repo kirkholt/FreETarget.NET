@@ -7,20 +7,9 @@ namespace FreETarget.NET.Data.Entities
     /// A club can have multiple ranges (ie. indoor, outdoor, 25m, 50m, 100m, etc.)
     /// It has multiple tracks
     /// </summary>
-    public class Range
+    public class Range : RangeDTO
     {
-        /// <summary>
-        /// Unique identifier of the range
-        /// </summary>
-        public Guid Id { get; set; } = Guid.CreateVersion7();
-        
-        /// <summary>
-        /// The name of the range
-        /// </summary>
-        public string Name { get; set; } = string.Empty;
-
         // Navigation properties
-
         /// <summary>
         /// The list of tracks in the range
         /// </summary>

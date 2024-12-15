@@ -4,6 +4,7 @@ using FreETarget.NET.Data.Enums;
 using FreETarget.NET.Data.Models.DTO;
 using FreETarget.NET.Data.Services;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualStudio.TestPlatform.ObjectModel.Client;
 
 namespace FreETarget.NET.Test.DatabaseTest
 {
@@ -44,9 +45,6 @@ namespace FreETarget.NET.Test.DatabaseTest
             Assert.Equal(rangeId, r2.Id);
             Assert.Equal(rangeName, r2.Name);
             
-
-
-
             List<Data.Entities.Range> ranges = await DataService.RangeGet();
             Assert.Single(ranges);
 
@@ -54,8 +52,6 @@ namespace FreETarget.NET.Test.DatabaseTest
             r2.Name = newRangeName;
             await DataService.RangePut(new RangeDTO(r2));
             
-            AppDbContext.ChangeTracker.Clear();
-
             Data.Entities.Range? r3 = await DataService.RangeGet(rangeId);
             Assert.NotNull(r3);
             Assert.Equal(newRangeName, r3.Name);
@@ -64,6 +60,43 @@ namespace FreETarget.NET.Test.DatabaseTest
             await DataService.RangeDelete(rangeId);
             Assert.Empty(await DataService.RangeGet());
 
+        }
+
+        [Fact]
+        public async Task TestTarget()
+        {
+            Init();
+
+            Guid targetId = Guid.CreateVersion7();
+            string targetName = "Test Target";
+
+
+            Target target = new()
+            {
+                Id = targetId,
+                Name = targetName
+            };
+
+            Target t1 = await DataService.TargetPost(target);
+            Assert.NotNull( t1);
+            Assert.Equal(targetId, t1.Id);
+            Assert.Equal(targetName, t1.Name);
+
+            List<Target> list = await DataService.TargetGet();
+            Assert.Single(list);
+
+            string newName = "New target name";
+            t1.Name = newName;
+            await DataService.TargetPut(t1);
+
+            Target t2 = await DataService.TargetGet(targetId);
+            Assert.NotNull(t2);
+            Assert.Equal(newName, t2.Name);
+
+            SaveResult saveResult = await DataService.TargetDelete(targetId);
+            Assert.Equal(SaveResult.Ok, saveResult);
+            list = await DataService.TargetGet();
+            Assert.Empty(list);
         }
 
         [Fact]
@@ -82,8 +115,6 @@ namespace FreETarget.NET.Test.DatabaseTest
             };
 
             Data.Entities.Range r = await DataService.RangePost(rangeDTO);
-
-            AppDbContext.ChangeTracker.Clear();
 
             int trackNo = 1;    
             TrackDTO trackDTO = new()
