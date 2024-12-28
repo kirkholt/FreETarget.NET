@@ -1,4 +1,6 @@
-﻿namespace FreETarget.NET.Data.Entities
+﻿using FreETarget.NET.Data.Models.DTO;
+
+namespace FreETarget.NET.Data.Entities
 {
     /// <summary>
     /// A shot is a single bullet fired at a target
@@ -8,7 +10,7 @@
         /// <summary>
         /// Unique identifier of the shot
         /// </summary>
-        public Guid Id { get; } = Guid.CreateVersion7();
+        public Guid Id { get; set; } = Guid.CreateVersion7();
 
         /// <summary>
         /// The Date and time when the shot was fired
@@ -18,7 +20,7 @@
         /// <summary>
         /// The session where the shot was fired
         /// </summary>
-        public required Session Session { get; set; }
+        public Session Session { get; set; }
 
         /// <summary>
         /// The number of the shot in the session
@@ -56,5 +58,50 @@
         /// </summary>
         public Guid SessionId { get; set; }
 
+        public Shot() { 
+            Id = Guid.NewGuid();
+            CreatedAt = DateTime.Now;
+        }
+
+        public Shot(ShotDTO shotDTO) : base()
+        {
+            this.Id = Guid.CreateVersion7();
+
+            if (shotDTO == null)
+            {
+                throw new ArgumentNullException(nameof(shotDTO));
+            }
+
+            if (shotDTO.X == null || shotDTO.Y == null)
+            {
+                if (shotDTO.R == null || shotDTO.A == null)
+                {
+                    throw new ArgumentException("X, Y or R, A must have a value");
+                }
+                else
+                {
+                    this.R = shotDTO.R.Value;
+                    this.A = shotDTO.A.Value;
+
+                    this.X = (decimal)((double)this.R * Math.Cos((double)this.A));
+                    this.Y = (decimal)((double)this.R * Math.Sin((double)this.A));
+                }
+            }
+            else
+            {
+                if (shotDTO.R == null || shotDTO.A == null)
+                {
+                    this.X = shotDTO.X.Value;
+                    this.Y = shotDTO.Y.Value;
+                    this.R = (decimal)Math.Sqrt((double)(this.X * this.X + this.Y * this.Y));
+                    this.A = (decimal)Math.Atan2((double)this.Y, (double)this.X);
+                }
+                else
+                {
+                    throw new ArgumentException("X, Y or R, A must have a value");
+                }
+
+            }
+        }
     }
 }

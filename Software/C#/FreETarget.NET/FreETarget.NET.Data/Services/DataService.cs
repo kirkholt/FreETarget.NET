@@ -3,6 +3,9 @@ using FreETarget.NET.Data.Models.DTO;
 using Microsoft.EntityFrameworkCore;
 using Range = FreETarget.NET.Data.Entities.Range;
 using FreETarget.NET.Data.Entities;
+using FreETarget.NET.Data.Models;
+using FreETarget.NET.Data.Models.TargetTypes;
+using System;
 
 namespace FreETarget.NET.Data.Services
 {
@@ -45,9 +48,9 @@ namespace FreETarget.NET.Data.Services
             return await _context.RangeDbSet.AsNoTracking().Where(w => w.Id == id).SingleOrDefaultAsync(cancellationToken);
         }
 
-        public async Task<Range> RangePost(RangeDTO  rangeDTO , CancellationToken cancellationToken = default)
+        public async Task<Range> RangePost(RangeDTO rangeDTO, CancellationToken cancellationToken = default)
         {
-           Range range = new Range(rangeDTO);
+            Range range = new Range(rangeDTO);
             _context.RangeDbSet.Add(range);
             await _context.SaveChangesAsync(cancellationToken);
             _context.ChangeTracker.Clear();
@@ -111,7 +114,7 @@ namespace FreETarget.NET.Data.Services
         public async Task<Track?> TrackGet(Guid id, CancellationToken cancellationToken = default)
         {
             return await _context.TrackDbSet
-                .Include( i => i.Range)
+                .Include(i => i.Range)
                 .Include(i => i.Target)
                 .AsNoTracking().Where(w => w.Id == id).SingleOrDefaultAsync(cancellationToken);
         }
@@ -135,7 +138,7 @@ namespace FreETarget.NET.Data.Services
             try
             {
                 var x = await _context.SaveChangesAsync();
-                saveResult= SaveResult.Ok;
+                saveResult = SaveResult.Ok;
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -245,7 +248,7 @@ namespace FreETarget.NET.Data.Services
         {
             return await _context
                 .SessionDbSet
-                .OrderBy(o => o.CreatedAt)  
+                .OrderBy(o => o.CreatedAt)
                 .ToListAsync(cancellationToken);
 
         }
@@ -255,7 +258,7 @@ namespace FreETarget.NET.Data.Services
             return await _context
                 .SessionDbSet
                 .Include(i => i.Track)
-                .ThenInclude(i => i.Range)  
+                .ThenInclude(i => i.Range)
                 .Include(i => i.ShotList)
                 .AsNoTracking()
                 .Where(w => w.Id == id)
@@ -275,6 +278,32 @@ namespace FreETarget.NET.Data.Services
                 .ToListAsync(cancellationToken);
         }
 
+        public async Task<Session> SessionGetActiveByTargetId(Guid targetId, CancellationToken cancellationToken = default)
+        {
+            return await _context
+                .SessionDbSet
+                .Include(i => i.Track)
+                .Include(i => i.Track.Target)
+                .Include(i => i.ShotList)
+                .AsNoTracking()
+                .Where(w => w.Track.TargetId == targetId)
+                .Where(w => w.Active)
+                .SingleAsync(cancellationToken);
+        }
+
+        public async Task<Guid> SessionGetActiveIdByTargetId(Guid targetId, CancellationToken cancellationToken = default)
+        {
+             var s = await _context
+                .SessionDbSet
+                .AsNoTracking()
+                .Where(w => w.Track.TargetId == targetId)
+                .Where(w => w.Active)
+                .Select(s => new { s.Id }).FirstAsync(cancellationToken);
+
+            return s.Id;
+        }
+
+
         public async Task<Session> SessionPost(Session session, CancellationToken cancellationToken = default)
         {
             _context.SessionDbSet.Add(session);
@@ -284,10 +313,10 @@ namespace FreETarget.NET.Data.Services
             // If the session is active, deactivate all other sessions on the same track
             if (session.Active)
             {
-               await  _context
-                    .SessionDbSet
-                    .Where(w => w.TrackId == session.TrackId && w.Id != session.Id)
-                    .ExecuteUpdateAsync(e => e.SetProperty(x => x.Active, false));
+                await _context
+                     .SessionDbSet
+                     .Where(w => w.TrackId == session.TrackId && w.Id != session.Id)
+                     .ExecuteUpdateAsync(e => e.SetProperty(x => x.Active, false));
             }
             return await SessionGet(session.Id, cancellationToken);
         }
@@ -327,5 +356,37 @@ namespace FreETarget.NET.Data.Services
         }
 
         #endregion
+
+        #region Shot
+        public async Task<SaveResult> ShotAdd(ShotDTO shotDTO, CancellationToken cancellationToken = default)
+        {
+            Session session = await SessionGetActiveByTargetId(shotDTO.TargetId, cancellationToken);
+
+            AddShotResult addShotResult = new AddShotResult();
+
+            Shot shot = new Shot(shotDTO);
+            shot.SessionId = session.Id;
+
+            aTargetType? targetType = TargetTypeGet( TargetType.Dgi15Riffel);
+            shot.ResultDecimal = targetType?.GetScore(shot.R);
+
+            _context.ShotDbSet.Add(shot);
+            await _context.SaveChangesAsync(cancellationToken);
+            _context.ChangeTracker.Clear();
+            return SaveResult.Ok;
+        }
+        #endregion
+
+        public aTargetType? TargetTypeGet(TargetType targetType)
+        {
+            switch (targetType)
+            {
+                case TargetType.Dgi15Riffel:
+                    return new Models.TargetTypes.Dgi15mRiffel();
+                default:
+                    return null;
+
+            }
+        }
     }
 }

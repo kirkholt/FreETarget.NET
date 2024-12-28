@@ -43,13 +43,13 @@ namespace FreETarget.NET.Data.Entities
             this.RangeId = trackDTO.RangeId;
             this.TargetId = trackDTO.TargetId;
 
-            if (trackDTO.TargetId != null)
-            {
-                this.Target = new Target()
-                {
-                    Id = trackDTO.TargetId.Value
-                };
-            }
+            //if (trackDTO.TargetId != null)
+            //{
+            //    this.Target = new Target()
+            //    {
+            //        Id = trackDTO.TargetId.Value
+            //    };
+            //}
         }
     }
 }

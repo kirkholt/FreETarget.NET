@@ -200,8 +200,61 @@ namespace FreETarget.NET.Test.DatabaseTest
 
             List<Session> sessionList = await DataService.SessionGet();
             Assert.Single(sessionList);
+        }
 
-            Session session1 = session;
+        [Fact]
+        public async Task TestShot()
+        {
+            Init();
+            
+            Guid rangeId = Guid.CreateVersion7();
+            string rangeName = "Test Range";
+
+            RangeDTO rangeDTO = new()
+            {
+                Id = rangeId,
+                Name = rangeName
+            };
+            Data.Entities.Range range = await DataService.RangePost(rangeDTO);
+
+            Guid targetId = Guid.CreateVersion7();
+            string targetName = "Test Target";
+            Target target = new()
+            {
+                Id = targetId,
+                Name = targetName
+            };
+            target = await DataService.TargetPost(target);
+
+            int trackNo = 1;
+            TrackDTO trackDTO = new()
+            {
+                RangeId = rangeId,
+                No = trackNo,
+                TargetId = targetId
+            };
+            Track track = await DataService.TrackPost(trackDTO);
+
+            Session session = new();
+            session.TrackId = track.Id;
+            session.TargetType = TargetType.Dgi15Riffel;
+            session.SessionType = SessionType.Trial;
+            session.ResultType = ResultType.Integer;
+            session = await DataService.SessionPost(session);
+
+
+            Random random = new();
+            for (int i = 0; i < 10; i++)
+            {
+                ShotDTO shotDTO = new();
+                shotDTO.TargetId = targetId;
+                shotDTO.X = random.Next(-30, 30);
+                shotDTO.Y = random.Next(-30, 30);
+                await DataService.ShotAdd(shotDTO);
+            }
+
+            session = await DataService.SessionGetActiveByTargetId(targetId);
+
         }
     }
 }
